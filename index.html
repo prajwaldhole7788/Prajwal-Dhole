@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="RainWise - A CEP web project on rainwater harvesting with an interactive calculator and field study.">
+<title>RainWise | Rainwater Harvesting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#102a43;--muted:#5f7285;--blue:#087f8c;--deep:#073b4c;--pale:#eef9fa;--line:#dce9ed;--white:#fff;--shadow:0 18px 50px rgba(8,63,80,.10)}
+html{scroll-behavior:smooth}
+body{font-family:Inter,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.65}
+h1,h2,h3,h4{font-family:Poppins,Inter,sans-serif;line-height:1.15}
+a{text-decoration:none;color:inherit}
+.container{width:min(1120px,92%);margin:auto}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid rgba(220,233,237,.8)}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:Poppins;font-weight:800;font-size:1.25rem;display:flex;align-items:center;gap:9px}
+.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--pale)}
+nav{display:flex;gap:25px;font-size:.92rem;font-weight:600;color:#42566a}
+nav a:hover{color:var(--blue)}
+.menu-btn{display:none;border:0;background:none;font-size:1.5rem;cursor:pointer}
+.hero{background:linear-gradient(135deg,#f2fbfc 0%,#fff 58%,#eaf7f8 100%);padding:92px 0 82px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:70px;align-items:center}
+.eyebrow{display:inline-block;letter-spacing:2px;font-size:.73rem;font-weight:800;color:var(--blue);margin-bottom:15px}
+.hero h1{font-size:clamp(3rem,6vw,5.2rem);letter-spacing:-2px;max-width:700px}
+.hero h1 span{color:var(--blue)}
+.hero-text{font-size:1.08rem;color:var(--muted);max-width:620px;margin:25px 0}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:12px;padding:13px 20px;font-weight:800;cursor:pointer;transition:.2s}
+.btn.primary{background:var(--blue);color:white;box-shadow:0 8px 20px rgba(8,127,140,.2)}
+.btn.primary:hover{transform:translateY(-2px)}
+.btn.secondary{border:1px solid var(--line);background:white;color:var(--ink)}
+.hero-stats{display:flex;gap:35px;margin-top:42px}
+.hero-stats div{display:flex;flex-direction:column}
+.hero-stats strong{font-family:Poppins;font-size:1.1rem}.hero-stats span{font-size:.78rem;color:var(--muted)}
+.hero-card{min-height:440px;border-radius:35px;background:var(--deep);position:relative;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);overflow:hidden}
+.drop-art{width:270px;height:270px;position:relative;display:grid;place-items:center}
+.big-drop{font-size:8rem;filter:drop-shadow(0 18px 25px rgba(0,0,0,.18));animation:float 3s ease-in-out infinite}
+.orbit{position:absolute;border:1px solid rgba(255,255,255,.18);border-radius:50%;inset:0}.o2{inset:30px}
+@keyframes float{50%{transform:translateY(-12px)}}
+.mini-card{position:absolute;bottom:25px;left:25px;right:25px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:17px;padding:17px;color:white}
+.mini-card span{font-size:.67rem;letter-spacing:1.5px;opacity:.7}.mini-card strong{display:block;margin-top:4px}
+.section{padding:92px 0}.tinted{background:var(--pale)}
+.section-heading{max-width:700px;margin-bottom:40px}.section-heading.center{text-align:center;margin-left:auto;margin-right:auto}
+.section-heading h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:15px;color:var(--ink)}.section-heading p{color:var(--muted)}
+.info-grid,.benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.info-card{border:1px solid var(--line);padding:30px;border-radius:20px;background:#fff;transition:.2s}
+.info-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.icon{font-size:2rem;margin-bottom:20px}.info-card h3{margin-bottom:8px}.info-card p,.benefit-grid p{color:var(--muted);font-size:.93rem}
+.calc-layout{display:grid;grid-template-columns:1fr 430px;gap:80px;align-items:center}
+.formula{background:white;border:1px dashed #a7cbd0;border-radius:12px;padding:15px;margin:22px 0;font-weight:700;font-size:.9rem}
+.section-heading small{color:#708393}
+.calculator-card{background:#fff;padding:32px;border-radius:24px;box-shadow:var(--shadow)}
+.calculator-card label{display:block;font-size:.85rem;font-weight:800;margin:15px 0 7px}.calculator-card label span{color:var(--muted);font-weight:500}
+.calculator-card input{width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;font:inherit;outline:none}
+.calculator-card input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(8,127,140,.1)}
+.full{width:100%;margin-top:18px}
+.result-box{margin-top:20px;background:var(--deep);color:white;border-radius:17px;padding:22px}.result-box span{font-size:.8rem;opacity:.7}.result-box strong{display:block;font-family:Poppins;font-size:2rem;margin:4px 0}.result-box small{opacity:.7}
+
+.parameter-section{margin-top:55px;background:#fff;border-radius:22px;padding:36px;border:1px solid var(--line);box-shadow:0 6px 24px rgba(8,63,80,.04)}
+.parameter-section h3{font-size:1.45rem;margin-bottom:8px}
+.param-desc{color:var(--muted);font-size:0.95rem}
+.param-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:25px}
+.param-item{background:var(--pale);border:1px solid var(--line);border-radius:16px;padding:22px}
+.param-badge{display:inline-block;background:var(--blue);color:#fff;font-size:.7rem;font-weight:800;padding:4px 9px;border-radius:6px;margin-bottom:12px;letter-spacing:1px}
+.param-item h4{font-size:1.1rem;margin-bottom:6px}
+.param-item p{font-size:.88rem;color:var(--muted);margin-bottom:10px}
+.param-item small{display:block;font-size:.8rem;font-weight:600;color:var(--deep);background:#fff;padding:8px 10px;border-radius:8px;border:1px solid #d4e7ea}
+
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step{border-top:3px solid var(--blue);padding:22px 5px}.step>span{font-family:Poppins;color:var(--blue);font-weight:800}.step h3{margin:10px 0 7px}.step p{font-size:.9rem;color:var(--muted)}
+
+.field-meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.meta-card{background:#fff;padding:16px 20px;border-radius:14px;box-shadow:0 10px 30px rgba(8,63,80,.05);border:1px solid var(--line)}
+.meta-card label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.5px;color:var(--muted);margin-bottom:5px}
+.meta-value{font-weight:700;color:var(--ink);font-size:1rem}
+
+.site-obs-card{background:#fff;padding:24px;border-radius:16px;margin-bottom:24px;box-shadow:0 10px 30px rgba(8,63,80,.05);border:1px solid var(--line)}
+.site-obs-card h3{font-size:1.15rem;margin-bottom:8px}
+.obs-content{color:var(--muted);font-size:.95rem;line-height:1.7}
+
+.photo-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:24px}
+.photo-box{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(8,63,80,.05);display:flex;flex-direction:column}
+.photo-img-wrap{width:100%;height:380px;background:#e7f0f1;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.photo-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-caption{padding:18px 20px;background:#fff;display:flex;flex-direction:column;gap:5px}
+.photo-caption strong{font-size:.95rem;color:var(--deep);letter-spacing:.5px}
+.photo-caption small{font-size:.82rem;color:var(--muted)}
+.tag{display:inline-block;align-self:flex-start;font-size:.65rem;font-weight:800;letter-spacing:1px;color:var(--blue);background:var(--pale);padding:4px 8px;border-radius:6px;margin-top:6px}
+
+.picker-ui{text-align:center;padding:24px}
+.picker-ui span{font-size:2.8rem;display:block;margin-bottom:8px}
+.picker-ui strong{display:block;color:var(--deep);font-size:.95rem;margin-bottom:12px}
+.attach-btn{background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:.85rem;cursor:pointer;box-shadow:0 4px 12px rgba(8,127,140,.2)}
+.attach-btn:hover{background:#066974}
+
+.verified-badge{display:inline-flex;align-items:center;gap:6px;background:#e6f8f0;color:#0d7a46;border:1px solid #c2ebd5;padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:700;margin-bottom:18px}
+
+.benefit-grid{grid-template-columns:repeat(4,1fr)}.benefit-grid>div{border-top:2px solid var(--line);padding-top:20px}.benefit-grid b{color:var(--blue);font-size:.8rem}.benefit-grid h3{margin:10px 0}
+.conclusion{padding-top:30px}.conclusion-box{background:var(--pale);border-radius:28px;padding:55px}.conclusion-box h2{max-width:700px;font-size:2.6rem;margin-bottom:15px}.conclusion-box p{color:var(--muted);max-width:700px;margin-bottom:25px}
+footer{background:#061f2b;color:white;padding:35px 0}.footer-content{display:flex;justify-content:space-between;gap:20px}.footer-content strong{font-family:Poppins}.footer-content p{opacity:.6;font-size:.8rem}
+
+@media(max-width:850px){
+  nav{display:none;position:absolute;top:72px;left:0;right:0;background:white;padding:20px;flex-direction:column;border-bottom:1px solid var(--line)}
+  nav.open{display:flex}.menu-btn{display:block}
+  .hero-grid,.calc-layout{grid-template-columns:1fr;gap:40px}
+  .hero-card{min-height:330px}
+  .info-grid,.field-meta-grid,.photo-cards-grid,.param-grid{grid-template-columns:1fr 1fr}
+  .timeline{grid-template-columns:1fr 1fr}
+  .benefit-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .hero{padding:65px 0}.hero h1{font-size:2.8rem}.hero-stats{gap:18px}
+  .info-grid,.field-meta-grid,.photo-cards-grid,.timeline,.benefit-grid,.param-grid{grid-template-columns:1fr}
+  .section{padding:65px 0}.conclusion-box{padding:32px}.conclusion-box h2{font-size:2rem}
+  .footer-content{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="#home"><span class="brand-mark">💧</span> RainWise</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+    <nav id="navLinks">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#process">Process</a>
+      <a href="#field-study">Field Study</a>
+      <a href="#benefits">Benefits</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section id="home" class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">CEP PROJECT • WATER CONSERVATION</div>
+      <h1>Every drop has a <span>purpose.</span></h1>
+      <p class="hero-text">A simple digital guide to understanding rainwater harvesting, estimating collection potential, and documenting a real field observation.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#calculator">Calculate Rainwater</a>
+        <a class="btn secondary" href="#field-study">View Field Study</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>01</strong><span>Site Study</span></div>
+        <div><strong>02</strong><span>Calculator</span></div>
+        <div><strong>03</strong><span>Digital Solution</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="drop-art">
+        <div class="big-drop">💧</div>
+        <div class="orbit o1"></div><div class="orbit o2"></div>
+      </div>
+      <div class="mini-card">
+        <span>RAINWATER POTENTIAL</span>
+        <strong id="heroResult">64,000 litres / year</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">01 • ABOUT</span>
+      <h2>What is rainwater harvesting?</h2>
+      <p>Rainwater harvesting is the collection and storage of rainwater from rooftops or other surfaces for useful purposes or groundwater recharge.</p>
+    </div>
+    <div class="info-grid">
+      <article class="info-card"><div class="icon">🏠</div><h3>Collect</h3><p>Rain falling on a suitable roof is directed into gutters and downpipes.</p></article>
+      <article class="info-card"><div class="icon">🧹</div><h3>Filter</h3><p>Leaves and larger particles can be removed before water enters storage or recharge systems.</p></article>
+      <article class="info-card"><div class="icon">💦</div><h3>Store or Recharge</h3><p>Collected water can be stored for suitable uses or directed to a recharge structure.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="calculator" class="section tinted">
+  <div class="container">
+    <div class="calc-layout">
+      <div class="section-heading">
+        <span class="eyebrow">02 • CALCULATOR</span>
+        <h2>Estimate your rainwater potential.</h2>
+        <p>Enter the roof area, rainfall and runoff coefficient. The calculator estimates the amount of rainwater that could potentially be collected.</p>
+        <div class="formula">Harvestable water = Roof area × Rainfall × Runoff coefficient</div>
+        <small>Note: This is an estimate for educational purposes. Actual collection depends on roof condition, rainfall pattern, losses and system design.</small>
+      </div>
+
+      <div class="calculator-card">
+        <label for="roof">Roof area <span>(m²)</span></label>
+        <input id="roof" type="number" min="0" step="0.1" value="100">
+
+        <label for="rainfall">Annual rainfall <span>(mm)</span></label>
+        <input id="rainfall" type="number" min="0" step="1" value="800">
+
+        <label for="coefficient">Runoff coefficient <span>(0–1)</span></label>
+        <input id="coefficient" type="number" min="0" max="1" step="0.01" value="0.8">
+
+        <button class="btn primary full" id="calculateBtn">Calculate</button>
+
+        <div class="result-box">
+          <span>Estimated annual harvest</span>
+          <strong id="result">64,000 L</strong>
+          <small id="resultNote">Based on the values entered above.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="parameter-section">
+      <span class="eyebrow">FORMULA PARAMETERS</span>
+      <h3>Why do we use these three parameters?</h3>
+      <p class="param-desc">Every variable in the equation represents a physical constraint needed to convert raw weather data into usable storage volume.</p>
+      
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-badge">CATCHMENT</span>
+          <h4>Roof Area (m²)</h4>
+          <p><strong>Meaning:</strong> The horizontal surface area of the building top that receives rainfall.</p>
+          <p><strong>Why we use it:</strong> Water collection directly scales with catchment area. Doubling the roof size doubles potential capture.</p>
+          <small>Tip: Measure length × width of the building footprint.</small>
+        </div>
+
+        <div class="param-item">
+          <span class="param-badge">PRECIPITATION</span>
+          <h4>Annual Rainfall (mm)</h4>
+          <p><strong>Meaning:</strong> The total height of rainfall that falls in your region over a year.</p>
+          <p><strong>Why we use it:</strong> 1 mm of rain falling on 1 m² of area equals exactly 1 litre of water (1 m² × 0.001 m = 0.001 m³ = 1 L).</p>
+          <small>Tip: Pune / Maharashtra averages ~750 - 850 mm/year.</small>
+        </div>
+
+        <div class="param-item">
+          <span class="param-badge">EFFICIENCY</span>
+          <h4>Runoff Coefficient (0–1)</h4>
+          <p><strong>Meaning:</strong> The ratio of rainwater that flows into the drains versus what gets absorbed, evaporated, or lost.</p>
+          <p><strong>Why we use it:</strong> Roof materials are imperfect. Without this factor, calculations dangerously overestimate real water gain.</p>
+          <small>Concrete slab: 0.70 – 0.80 | Metal sheet: 0.85 – 0.95</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process" class="section">
+  <div class="container">
+    <div class="section-heading center">
+      <span class="eyebrow">03 • PROCESS</span>
+      <h2>How the system works</h2>
+      <p>A basic rooftop harvesting system follows a simple path.</p>
+    </div>
+    <div class="timeline">
+      <div class="step"><span>01</span><div><h3>Rooftop</h3><p>Rain falls on the roof and is collected over the catchment area.</p></div></div>
+      <div class="step"><span>02</span><div><h3>Gutter & Downpipe</h3><p>Water is guided from the roof toward the filter or storage point.</p></div></div>
+      <div class="step"><span>03</span><div><h3>Filter</h3><p>Basic filtration helps remove leaves and larger suspended material.</p></div></div>
+      <div class="step"><span>04</span><div><h3>Storage / Recharge</h3><p>Water is stored in a tank or directed to a suitable recharge structure.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="field-study" class="section">
+  <div class="container">
+    <div class="section-heading">
+      <div class="verified-badge">✔ Verified Institutional Field Documentation</div>
+      <h2>Field Study & Documentation</h2>
+      <p>Official site documentation and geotagged photographs recorded during the on-site engineering inspection at GSMCOE.</p>
+    </div>
+
+    <div class="field-meta-grid">
+      <div class="meta-card">
+        <label>ADDRESS / LOCATION</label>
+        <div class="meta-value">GSMCOE, Balewadi</div>
+      </div>
+      <div class="meta-card">
+        <label>VISIT DATE</label>
+        <div class="meta-value">29-09-2026</div>
+      </div>
+      <div class="meta-card">
+        <label>VISIT TIME</label>
+        <div class="meta-value">11:00 am</div>
+      </div>
+      <div class="meta-card">
+        <label>SITE TYPE</label>
+        <div class="meta-value">Building - E</div>
+      </div>
+    </div>
+
+    <div class="site-obs-card">
+      <h3>Site Observation</h3>
+      <div class="obs-content">
+        Inspection conducted across Building - E of the GSMCOE campus. The multi-story structure features an expansive flat reinforced concrete roof slab functioning as an ideal rainwater catchment. Prominent external vertical drainage downpipes convey rooftop runoff along the building facade directly downward. Existing rooftop storage tanks (Plasto) provide an immediate point of connection for harvested and filtered water, while surrounding ground areas provide suitable space for groundwater recharge percolation pits.
+      </div>
+    </div>
+
+    <!-- 3 Photo Display Cards -->
+    <div class="photo-cards-grid">
+      <!-- Photo 1 -->
+      <article class="photo-box">
+        <div class="photo-img-wrap" id="box1">
+          <input type="file" id="f1" accept="image/*" style="display:none" onchange="attachPhoto(event, 1)">
+          <div class="picker-ui">
+            <span>🏢</span>
+            <strong>Photo 1: Building - E</strong>
+            <button type="button" class="attach-btn" onclick="document.getElementById('f1').click()">Attach Photo</button>
+          </div>
+        </div>
+        <div class="photo-caption">
+          <strong>PHOTO 1: Building - E Catchment</strong>
+          <small>Lat: 18.574652°, Long: 73.768028°</small>
+          <span class="tag">GEOTAGGED PHOTO</span>
+        </div>
+      </article>
+
+      <!-- Photo 2 -->
+      <article class="photo-box">
+        <div class="photo-img-wrap" id="box2">
+          <input type="file" id="f2" accept="image/*" style="display:none" onchange="attachPhoto(event, 2)">
+          <div class="picker-ui">
+            <span>🚰</span>
+            <strong>Photo 2: Drainage Pipe</strong>
+            <button type="button" class="attach-btn" onclick="document.getElementById('f2').click()">Attach Photo</button>
+          </div>
+        </div>
+        <div class="photo-caption">
+          <strong>PHOTO 2: Drainage / Downpipe</strong>
+          <small>Lat: 18.5748507°, Long: 73.7679718°</small>
+          <span class="tag">GEOTAGGED PHOTO</span>
+        </div>
+      </article>
+
+      <!-- Photo 3 -->
+      <article class="photo-box">
+        <div class="photo-img-wrap" id="box3">
+          <input type="file" id="f3" accept="image/*" style="display:none" onchange="attachPhoto(event, 3)">
+          <div class="picker-ui">
+            <span>💧</span>
+            <strong>Photo 3: Plasto Tank</strong>
+            <button type="button" class="attach-btn" onclick="document.getElementById('f3').click()">Attach Photo</button>
+          </div>
+        </div>
+        <div class="photo-caption">
+          <strong>PHOTO 3: Collection / Storage Tank</strong>
+          <small>Lat: 18.5748507°, Long: 73.7679718°</small>
+          <span class="tag">GEOTAGGED PHOTO</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="benefits" class="section">
+  <div class="container">
+    <div class="section-heading center">
+      <span class="eyebrow">05 • BENEFITS</span>
+      <h2>Why harvest rainwater?</h2>
+    </div>
+    <div class="benefit-grid">
+      <div><b>01</b><h3>Conserve water</h3><p>Captures rainfall that might otherwise become runoff.</p></div>
+      <div><b>02</b><h3>Recharge groundwater</h3><p>Suitable recharge structures can help replenish groundwater.</p></div>
+      <div><b>03</b><h3>Reduce runoff</h3><p>Collection can reduce the amount of water flowing over surfaces during rainfall.</p></div>
+      <div><b>04</b><h3>Build resilience</h3><p>Stored rainwater can provide an additional water resource when appropriately managed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section conclusion">
+  <div class="container conclusion-box">
+    <span class="eyebrow">06 • CONCLUSION</span>
+    <h2>A small system can make a measurable difference.</h2>
+    <p>This project demonstrates how a simple website can combine field observation with a practical calculation tool to study rainwater harvesting at a selected site.</p>
+    <a class="btn primary" href="#home">Back to top ↑</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container footer-content">
+    <div><strong>RainWise</strong><p>CEP Project • Rainwater Harvesting</p></div>
+    <div><p>Designed as an educational prototype.</p></div>
+  </div>
+</footer>
+
+<script>
+// Calculator Engine
+const roof = document.getElementById("roof");
+const rainfall = document.getElementById("rainfall");
+const coefficient = document.getElementById("coefficient");
+const result = document.getElementById("result");
+const resultNote = document.getElementById("resultNote");
+const heroResult = document.getElementById("heroResult");
+const calculateBtn = document.getElementById("calculateBtn");
+
+function calculateRainwater() {
+  const r = parseFloat(roof.value) || 0;
+  const rain = parseFloat(rainfall.value) || 0;
+  let c = parseFloat(coefficient.value);
+  if (Number.isNaN(c)) c = 0;
+  c = Math.max(0, Math.min(1, c));
+  const litres = r * rain * c;
+  const formatted = litres.toLocaleString("en-IN", {maximumFractionDigits: 0});
+  result.textContent = `${formatted} L`;
+  heroResult.textContent = `${formatted} litres / year`;
+  resultNote.textContent = `Estimated from ${r} m² roof area, ${rain} mm rainfall and a ${c} runoff coefficient.`;
+}
+
+calculateBtn.addEventListener("click", calculateRainwater);
+[roof, rainfall, coefficient].forEach(el => el.addEventListener("input", calculateRainwater));
+calculateRainwater();
+
+// Navigation Toggle
+document.getElementById("menuBtn").addEventListener("click", () => {
+  document.getElementById("navLinks").classList.toggle("open");
+});
+
+document.querySelectorAll("#navLinks a").forEach(a => {
+  a.addEventListener("click", () => document.getElementById("navLinks").classList.remove("open"));
+});
+
+// Attach and permanently lock photos using LocalStorage
+function attachPhoto(event, id) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    renderImage(id, dataUrl);
+    try {
+      localStorage.setItem('rainwise_img_' + id, dataUrl);
+    } catch(err) {
+      console.warn("Storage full; rendering in current session.");
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderImage(id, dataUrl) {
+  const box = document.getElementById('box' + id);
+  if (box) {
+    box.innerHTML = `<img src="${dataUrl}" alt="Site Photo ${id}">`;
+  }
+}
+
+
+const defaultImages={
+1:["images/building-e.jpg","https://drive.google.com/uc?export=view&id=1s_Jx6xQycze24-TQeIP5xB6IHrFKpcGg"],
+2:["images/drainage-pipe.jpg","https://drive.google.com/uc?export=view&id=1YUVtvsaFDFWyh9fa0guIR6ZJWq1Jx7Oc"],
+3:["images/plasto-tank.jpg","https://drive.google.com/uc?export=view&id=1wp-w4gLQ0xdJy5EuCdy8MmepDuICbY39"]
+};
+
+function tryLoadImage(id){
+ const [local,fallback]=defaultImages[id];
+ const img=new Image();
+ img.onload=()=>renderImage(id,local);
+ img.onerror=()=>renderImage(id,fallback);
+ img.src=local;
+}
+
+// Restore saved photos on page reload
+window.addEventListener('DOMContentLoaded', () => {
+  [1,2,3].forEach(id=>{
+    const saved=localStorage.getItem('rainwise_img_'+id);
+    if(saved){renderImage(id,saved);}else{tryLoadImage(id);}
+  });
+});
+</script>
+</body>
+</html>
